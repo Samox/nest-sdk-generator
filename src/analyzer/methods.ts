@@ -109,15 +109,17 @@ export function analyzeMethods(
       // If we have exactly one argument, hurray! That's our URI path.
       const uriNameDec = decArgs[0]
 
+      const maybeUriPath = Node.isStringLiteral(uriNameDec) ? uriNameDec.getLiteralText() : uriNameDec.getType().getLiteralValue()
+
       // Variables are not supported
-      if (!Node.isStringLiteral(uriNameDec)) {
+      if (typeof maybeUriPath !== 'string') {
         return new Error(
           format('├─── The argument provided to the HTTP decorator is not a string literal:\n>> {cyan}', uriNameDec.getText())
         )
       }
 
       // Update the method's URI path
-      uriPath = uriNameDec.getLiteralText()
+      uriPath = maybeUriPath
 
       debug('├─── Detected argument in HTTP decorator, mapping this method to custom URI name')
     }

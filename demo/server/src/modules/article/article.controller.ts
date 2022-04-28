@@ -1,9 +1,10 @@
 import { Body, Controller, Delete, Get, Inject, Param, Patch, Post } from '@nestjs/common'
 import { ArticleService } from './article.service'
+import { articleBaseUrl, publishArticle } from './constants'
 import { ArticleCreateDTO } from './dtos/article-create.dto'
 import { ArticleUpdateDTO } from './dtos/article-update.dto'
 
-@Controller('article')
+@Controller(articleBaseUrl)
 export class ArticleController {
   @Inject()
   private readonly articleService!: ArticleService
@@ -25,6 +26,11 @@ export class ArticleController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: ArticleUpdateDTO) {
+    return this.articleService.update(id, dto)
+  }
+
+  @Patch(publishArticle)
+  publish(@Param('id') id: string, @Body() dto: ArticleUpdateDTO) {
     return this.articleService.update(id, dto)
   }
 

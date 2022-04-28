@@ -21,9 +21,11 @@ export function expectSingleStrLitDecorator(dec: Decorator): string | null | Err
 
   const [arg] = args
 
-  if (!Node.isStringLiteral(arg)) {
-    return new Error(format('The argument provided to the decorator is not a string literal:\n>>> {cyan}', arg.getText()))
+  const maybeString = Node.isStringLiteral(arg) ? arg.getLiteralText() : arg.getType().getLiteralValue()
+
+  if (typeof maybeString !== 'string') {
+    return new Error(format('COUCOU The argument provided to the decorator is not a string literal:\n>>> {cyan}', arg.getText()))
   }
 
-  return arg.getLiteralText()
+  return maybeString
 }

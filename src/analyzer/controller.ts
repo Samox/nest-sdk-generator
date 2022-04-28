@@ -101,14 +101,16 @@ export function analyzeController(project: Project, controllerPath: string, abso
   if (decExpr[0]) {
     const nameArg = decExpr[0]
 
-    // Variables are not supported
-    if (!Node.isStringLiteral(nameArg)) {
+    // Test the registration name
+    const maybeRegistrationName = Node.isStringLiteral(nameArg) ? camelcase(nameArg.getLiteralText()) : nameArg.getType().getLiteralValue()
+
+    if (typeof maybeRegistrationName === 'string') {
+      registrationName = maybeRegistrationName
+    } else {
       warn("Skipping this controller as its @Controller() decorator's argument is not a string literal")
       return null
     }
 
-    // Update the registration name
-    registrationName = camelcase(nameArg.getLiteralText())
     controllerUriPrefix = registrationName
     debug('Registering controller {yellow} as {yellow} (as specified in @Controller())', className, registrationName)
   } else {
